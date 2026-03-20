@@ -1,0 +1,4 @@
+com.example.tugaskeempat.test.composeApp-androidTest-0 C:\Users\USER\AndroidStudioProjects\TugasKeempat\composeApp\build\generated\res\resValues\androidTest\debug
+com.example.tugaskeempat.test.composeApp-mergeDebugAndroidTestResources-1 C:\Users\USER\AndroidStudioProjects\TugasKeempat\composeApp\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.example.tugaskeempat.test.composeApp-mergeDebugAndroidTestResources-2 C:\Users\USER\AndroidStudioProjects\TugasKeempat\composeApp\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.example.tugaskeempat.test.composeApp-debugAndroidTest-3 C:\Users\USER\AndroidStudioProjects\TugasKeempat\composeApp\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
