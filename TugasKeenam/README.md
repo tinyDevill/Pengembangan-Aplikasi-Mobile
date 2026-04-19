@@ -1,5 +1,6 @@
 # NAMA : Abi Sholihan
 # NIM  : 123140192
+# API  : JSONPlaceholder
 # SCREENSHOT APLIKASI :
 ## Tampilan Layar Awal
 ![Tampilan Awal](https://drive.google.com/uc?export=view&id=11neMuUHpSmByD-T1stkDhmLHcwe3FdMB)
