@@ -33,6 +33,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
+            implementation("app.cash.sqldelight:android-driver:2.0.1")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -46,6 +47,9 @@ kotlin {
             implementation("org.jetbrains.compose.material:material-icons-extended:1.7.0")
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
             implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+            implementation("app.cash.sqldelight:runtime:2.0.1")
+            implementation("app.cash.sqldelight:coroutines-extensions:2.0.1")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -53,6 +57,9 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+        }
+        iosMain.dependencies {
+            implementation("app.cash.sqldelight:native-driver:2.0.1")
         }
     }
 }

@@ -1,41 +1,47 @@
 package com.example.tugasketujuh.component
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.tugasketujuh.data.NoteRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class NoteViewModel : ViewModel() {
-    private val _notes = mutableStateListOf<Note>()
-    val notes: List<Note> get() = _notes
+class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
 
-    init {
-        _notes.addAll(
-            listOf(
-                Note(1, "Belajar Compose", "Multiplatform navigation sangat keren!", false),
-                Note(2, "Tugas Kuliah", "Deadline minggu ini", true),
-                Note(3, "Meeting Proyek", "Jam 14:00 dengan tim", false)
-            )
-        )
+    private val _searchQuery = MutableStateFlow("")
+
+    val notes = _searchQuery
+        .flatMapLatest { query ->
+            if (query.isEmpty()) {
+                repository.getAllNotes()
+            } else {
+                repository.search(query)
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun setSearch(query: String) {
+        _searchQuery.value = query
     }
 
     fun addNote(title: String, content: String) {
-        val newId = (_notes.maxOfOrNull { it.id } ?: 0) + 1
-        _notes.add(Note(newId, title, content))
-    }
-
-    fun updateNote(id: Int, title: String, content: String, isFavorite: Boolean) {
-        val index = _notes.indexOfFirst { it.id == id }
-        if (index != -1) {
-            _notes[index] = Note(id, title, content, isFavorite)
+        viewModelScope.launch {
+            repository.insert(title, content)
         }
     }
 
-    fun toggleFavorite(id: Int) {
-        val index = _notes.indexOfFirst { it.id == id }
-        if (index != -1) {
-            val note = _notes[index]
-            _notes[index] = note.copy(isFavorite = !note.isFavorite)
+    fun updateNote(id: Long, title: String, content: String) {
+        viewModelScope.launch {
+            repository.update(id, title, content)
         }
     }
 
-    fun getNoteById(id: Int): Note? = _notes.find { it.id == id }
+    fun deleteNote(id: Long) {
+        viewModelScope.launch {
+            repository.delete(id)
+        }
+    }
 }

@@ -7,3 +7,21 @@ CREATE TABLE Note (
 
 selectAll:
 SELECT * FROM Note;
+
+insert:
+INSERT INTO Note(title, content, created_at)
+VALUES (?, ?, ?);
+
+update:
+UPDATE Note SET title = ?, content = ?
+WHERE id = ?;
+
+delete:
+DELETE FROM Note WHERE id = ?;
+
+search:
+SELECT * FROM Note
+WHERE title LIKE ? OR content LIKE ?;
+
+selectById:
+SELECT * FROM Note WHERE id = ?;
