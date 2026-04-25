@@ -27,7 +27,7 @@ import com.example.tugasketujuh.component.NoteViewModel
 
 @Composable
 fun NoteDetailScreen(
-    noteId: Int,
+    noteId: Long,
     viewModel: NoteViewModel,
     onEditClick: () -> Unit,
     onBack: () -> Unit

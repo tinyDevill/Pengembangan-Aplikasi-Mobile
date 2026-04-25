@@ -32,7 +32,7 @@ class NoteRepository(private val database: Database) {
     }
 
     suspend fun update(id: Long, title: String, content: String, isFavorite: Boolean = false) {
-        val favoriteInt = if (isFavorite) 1 else 0
+        val favoriteInt : Long = if (isFavorite) 1 else 0
         queries.update(title, content, favoriteInt, id)
     }
 

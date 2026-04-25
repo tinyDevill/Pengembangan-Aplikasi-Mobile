@@ -5,6 +5,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Box
 import com.example.tugasketujuh.component.NoteViewModel
 import kotlinx.coroutines.launch
 
@@ -60,10 +62,8 @@ fun EditNoteScreen(
         Button(
             onClick = {
                 if (title.isNotBlank()) {
-                    scope.launch {
-                        viewModel.updateNote(noteId, title, content)
-                        onSave()
-                    }
+                    viewModel.updateNote(noteId, title, content)
+                    onSave()
                 }
             },
             modifier = Modifier.fillMaxWidth()
