@@ -1,16 +1,11 @@
 package com.example.tugasketujuh.screen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.tugasketujuh.component.NoteViewModel
-import com.example.tugasketujuh.db.Note
 import kotlinx.coroutines.launch
 
 @Composable
@@ -19,53 +14,60 @@ fun EditNoteScreen(
     viewModel: NoteViewModel,
     onSave: () -> Unit
 ) {
-
-    var note by remember { mutableStateOf<Note?>(null) }
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(true) }
 
     val scope = rememberCoroutineScope()
 
-    // 🔥 ambil data dari database
     LaunchedEffect(noteId) {
-        val result = viewModel.getNoteById(noteId)
-        note = result
-        result?.let {
-            title = it.title
-            content = it.content
+        val note = viewModel.getNoteById(noteId)
+        if (note != null) {
+            title = note.title
+            content = note.content
         }
+        isLoading = false
     }
 
-    // ⏳ loading state
-    if (note == null) {
-        Text("Loading...")
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
         return
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-
-        TextField(
+        OutlinedTextField(
             value = title,
             onValueChange = { title = it },
-            label = { Text("Judul") }
+            label = { Text("Judul Catatan") },
+            modifier = Modifier.fillMaxWidth()
         )
 
-        TextField(
+        OutlinedTextField(
             value = content,
             onValueChange = { content = it },
-            label = { Text("Isi catatan") }
+            label = { Text("Isi Catatan") },
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            maxLines = 10
         )
 
-        Button(onClick = {
-            scope.launch {
-                viewModel.updateNote(noteId, title, content)
-                onSave()
-            }
-        }) {
+        Button(
+            onClick = {
+                if (title.isNotBlank()) {
+                    scope.launch {
+                        viewModel.updateNote(noteId, title, content)
+                        onSave()
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text("Simpan Perubahan")
         }
     }

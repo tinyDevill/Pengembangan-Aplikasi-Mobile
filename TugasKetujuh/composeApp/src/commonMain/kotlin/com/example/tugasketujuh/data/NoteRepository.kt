@@ -6,6 +6,7 @@ import com.example.tugasketujuh.db.Database
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 
 class NoteRepository(private val database: Database) {
@@ -30,8 +31,9 @@ class NoteRepository(private val database: Database) {
         queries.insert(title, content, now)
     }
 
-    suspend fun update(id: Long, title: String, content: String) {
-        queries.update(title, content, id)
+    suspend fun update(id: Long, title: String, content: String, isFavorite: Boolean = false) {
+        val favoriteInt = if (isFavorite) 1 else 0
+        queries.update(title, content, favoriteInt, id)
     }
 
     suspend fun delete(id: Long) {
@@ -39,6 +41,14 @@ class NoteRepository(private val database: Database) {
     }
 
     suspend fun getNoteById(id: Long): com.example.tugasketujuh.db.Note? {
-        return queries.selectById(id).executeAsOneOrNull()
+        return withContext(Dispatchers.IO) {
+            queries.selectById(id).executeAsOneOrNull()
+        }
+    }
+
+    suspend fun toggleFavorite(id: Long) {
+        val note = getNoteById(id) ?: return
+        val newIsFavorite = !note.is_favorite
+        update(id, note.title, note.content, newIsFavorite)
     }
 }

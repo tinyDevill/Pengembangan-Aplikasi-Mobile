@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
 
@@ -42,6 +43,25 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
     fun deleteNote(id: Long) {
         viewModelScope.launch {
             repository.delete(id)
+        }
+    }
+
+    // Ambil note berdasarkan ID
+    suspend fun getNoteById(id: Long): com.example.tugasketujuh.db.Note? {
+        return repository.getNoteById(id)
+    }
+
+    // Toggle favorite
+    fun toggleFavorite(id: Long) {
+        viewModelScope.launch {
+            repository.toggleFavorite(id)
+        }
+    }
+
+    // Update dengan isFavorite
+    fun updateNote(id: Long, title: String, content: String, isFavorite: Boolean = false) {
+        viewModelScope.launch {
+            repository.update(id, title, content, isFavorite)
         }
     }
 }

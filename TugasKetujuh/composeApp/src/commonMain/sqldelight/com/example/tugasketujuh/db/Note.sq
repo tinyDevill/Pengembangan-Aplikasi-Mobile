@@ -2,18 +2,20 @@ CREATE TABLE Note (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
-    created_at INTEGER NOT NULL
+    created_at INTEGER NOT NULL,
+    is_favorite INTEGER NOT NULL DEFAULT 0   -- 0 = false, 1 = true
 );
 
 selectAll:
-SELECT * FROM Note;
+SELECT * FROM Note ORDER BY created_at DESC;
 
 insert:
-INSERT INTO Note(title, content, created_at)
-VALUES (?, ?, ?);
+INSERT INTO Note(title, content, created_at, is_favorite)
+VALUES (?, ?, ?, 0);
 
 update:
-UPDATE Note SET title = ?, content = ?
+UPDATE Note
+SET title = ?, content = ?, is_favorite = ?
 WHERE id = ?;
 
 delete:
@@ -21,7 +23,8 @@ DELETE FROM Note WHERE id = ?;
 
 search:
 SELECT * FROM Note
-WHERE title LIKE ? OR content LIKE ?;
+WHERE title LIKE ? OR content LIKE ?
+ORDER BY created_at DESC;
 
 selectById:
 SELECT * FROM Note WHERE id = ?;
