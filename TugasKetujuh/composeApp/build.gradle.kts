@@ -16,7 +16,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -26,14 +26,14 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     jvm()
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
-            implementation("app.cash.sqldelight:android-driver:2.0.1")
+            implementation(libs.sqldelight.android.driver)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -44,22 +44,24 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.coroutines)
+            implementation("androidx.datastore:datastore:1.2.1")
+            implementation("androidx.datastore:datastore-preferences:1.2.1")
             implementation("org.jetbrains.compose.material:material-icons-extended:1.7.0")
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
             implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
-            implementation("app.cash.sqldelight:runtime:2.0.1")
-            implementation("app.cash.sqldelight:coroutines-extensions:2.0.1")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.native.driver)
+        }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
-        }
-        iosMain.dependencies {
-            implementation("app.cash.sqldelight:native-driver:2.0.1")
+            implementation(libs.sqldelight.sqlite.driver)
         }
     }
 }
@@ -95,6 +97,16 @@ dependencies {
     debugImplementation(libs.compose.uiTooling)
 }
 
+sqldelight {
+    databases {
+        register("NotesDatabase") {
+            packageName.set("com.example.tugasketujuh.database")
+            srcDirs.setFrom("src/commonMain/sqldelight")
+            dialect("app.cash.sqldelight:sqlite-3-38-dialect:2.3.2")
+        }
+    }
+}
+
 compose.desktop {
     application {
         mainClass = "com.example.tugasketujuh.MainKt"
@@ -103,14 +115,6 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.example.tugasketujuh"
             packageVersion = "1.0.0"
-        }
-    }
-}
-
-sqldelight {
-    databases {
-        create("NotesDatabase") {
-            packageName.set("com.example.tugasketujuh.db")
         }
     }
 }

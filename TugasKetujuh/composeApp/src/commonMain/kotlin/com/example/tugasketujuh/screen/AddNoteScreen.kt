@@ -2,10 +2,12 @@ package com.example.tugasketujuh.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,14 +22,36 @@ fun AddNoteScreen(viewModel: NoteViewModel, onSave: () -> Unit) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        TextField(value = title, onValueChange = { title = it }, label = { Text("Judul") })
-        TextField(value = content, onValueChange = { content = it }, label = { Text("Isi catatan") })
-        Button(onClick = {
-            if (title.isNotBlank()) {
-                viewModel.addNote(title, content)
-                onSave()
-            }
-        }) { Text("Simpan Catatan Baru") }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(text = "Add Note", style = MaterialTheme.typography.headlineSmall)
+        OutlinedTextField(
+            value = title,
+            onValueChange = { title = it },
+            label = { Text("Title") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = content,
+            onValueChange = { content = it },
+            label = { Text("Note") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp)
+        )
+        Button(
+            onClick = {
+                if (title.isNotBlank()) {
+                    viewModel.addNote(title, content)
+                    onSave()
+                }
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text("Save")
+        }
     }
 }

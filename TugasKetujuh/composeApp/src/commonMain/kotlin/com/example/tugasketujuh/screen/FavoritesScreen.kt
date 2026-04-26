@@ -1,58 +1,54 @@
 package com.example.tugasketujuh.screen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.example.tugasketujuh.component.NoteItem
 import com.example.tugasketujuh.component.NoteViewModel
-import com.example.tugasketujuh.navigation.Screen
 
 @Composable
 fun FavoritesScreen(
     viewModel: NoteViewModel,
-    navController: NavHostController
+    onNoteClick: (Int) -> Unit
 ) {
-    val allNotes by viewModel.notes.collectAsState()
-    val favorites = allNotes.filter { it.is_favorite }
+    val favorites = viewModel.notes.collectAsState().value.filter { it.isFavorite }
 
-    Scaffold { paddingValues ->
-        Column(
+    if (favorites.isEmpty()) {
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
         ) {
-            if (favorites.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Belum ada catatan favorit",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                ) {
-                    items(favorites) { dbNote ->
-                        NoteItem(
-                            note = dbNote.toNote(),
-                            onClick = {
-                                navController.navigate(Screen.NoteDetail.createRoute(dbNote.id.toInt()))
-                            }
-                        )
-                    }
-                }
-            }
+            Text(
+                text = "There is no favorite note yet",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+        }
+        return
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        items(favorites, key = { it.id }) { note ->
+            NoteItem(
+                note = note,
+                onClick = { onNoteClick(note.id) }
+            )
         }
     }
 }
