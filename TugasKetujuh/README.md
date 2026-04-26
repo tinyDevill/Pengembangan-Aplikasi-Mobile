@@ -2,7 +2,14 @@
 # NIM  : 123140192
 # SCREENSHOT APLIKASI :
 ## Tampilan Database Schema
-![Database Schema](https://drive.google.com/uc?export=view&id=)
+1. Saat aplikasi dibuka:
+   Database lokal → logic aplikasi → tampilan
+2. Saat catatan diedit:
+   update data → simpan ke database → refresh tampilan
+3. Saat membuat catatan baru:
+   input data → validasi → insert ke tabel notes → jika perlu insert relasi ke notes_folder
+4. Saat menghapus catatan:
+   hapus data dari notes → hapus relasi di notes_folder → refresh tampilan
 
 ## Tampilan Layar Utama
 ![Layar Utama](https://drive.google.com/uc?export=view&id=14cx1fNWdpa0k0UlbhPrMFSPnrB5oT3Gm)
