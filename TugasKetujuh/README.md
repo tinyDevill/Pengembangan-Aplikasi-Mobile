@@ -5,22 +5,25 @@
 ![Database Schema](https://drive.google.com/uc?export=view&id=)
 
 ## Tampilan Layar Utama
-![Layar Utama](https://drive.google.com/uc?export=view&id=1hKGaHf_nehKQGxiBaeNumpaNg8iW_JBa)
+![Layar Utama](https://drive.google.com/uc?export=view&id=14cx1fNWdpa0k0UlbhPrMFSPnrB5oT3Gm)
 
 ## Tampilan Layar Tambah Catatan
-![Layar Tambah Catatan](https://drive.google.com/uc?export=view&id=166hPe03Nv969ufZsdKlBJQyESJBRv9oX)
+![Layar Tambah Catatan](https://drive.google.com/uc?export=view&id=1guC1AaWxeV2t3i71pgjTqsWlcOgDzLs1)
 
 ## Tampilan Layar Detail Catatan
-![Layar Detail Catatan](https://drive.google.com/uc?export=view&id=1D_J-Ky1KpDh1zhp2UUsCHC56sMe1dIJr)
+![Layar Detail Catatan](https://drive.google.com/uc?export=view&id=1QZuW-zi5DVCZoV8Omi_yhcyGXBo6fPUb)
 
 ## Tampilan Layar Edit Catatan
-![Layar Edit Catatan](https://drive.google.com/uc?export=view&id=108Je0SQoqUcopO5cY0Ud9_ky_nO8Twns)
+![Layar Edit Catatan](https://drive.google.com/uc?export=view&id=1ntq-LrXvzwkNvAMHmHDI_gfF_0zFdQPr)
+
+## Tampilan Layar Catatan Favorit
+![Layar Catatan Favorit](https://drive.google.com/uc?export=view&id=1M2Ks1sCSVI2QDZ32YmemTHePbPv5C0ku)
 
 ## Tampilan Layar Profile
-![Layar Profile](https://drive.google.com/uc?export=view&id=10rKD2zQ6W7f5ZeBVoBdsYTRwiSuuYxsa)
+![Layar Profile](https://drive.google.com/uc?export=view&id=1-SzFTKtNGuIR0izgy-u2mb4MDPTb-4_T)
 
 ## Tampilan Settings
-![Settings](https://drive.google.com/uc?export=view&id=1XhJ-DfMbFV_mPSM9zzwvWCp1u2iTD0na)
+![Settings](https://drive.google.com/uc?export=view&id=1RNuTbN7UCY77zUgVzISqkKFCwFV3LRtu)
 
 
 ## Offline-first
