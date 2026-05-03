@@ -1,49 +1,37 @@
 package com.example.tugaskesembilan
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
-
-import tugaskesembilan.composeapp.generated.resources.Res
-import tugaskesembilan.composeapp.generated.resources.compose_multiplatform
+import com.example.tugaskesembilan.data.ai.AIRepositoryImpl
+import com.example.tugaskesembilan.data.ai.GeminiService
+import com.example.tugaskesembilan.network.createHttpClient
+import com.example.tugaskesembilan.presentation.summarizer.SummarizerScreen
+import com.example.tugaskesembilan.presentation.summarizer.SummarizerViewModel
 
 @Composable
 @Preview
 fun App() {
+    val client = remember { createHttpClient() }
+    DisposableEffect(Unit) {
+        onDispose { client.close() }
+    }
+
+    val repository = remember(client) {
+        AIRepositoryImpl(GeminiService(client))
+    }
+    val viewModel = remember(repository) {
+        SummarizerViewModel(repository)
+    }
+
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
+        Surface(modifier = Modifier.fillMaxSize()) {
+            SummarizerScreen(viewModel = viewModel)
         }
     }
 }
