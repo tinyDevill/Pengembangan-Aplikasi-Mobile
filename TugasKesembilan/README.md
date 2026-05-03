@@ -1,3 +1,6 @@
+# Nama : Abi Sholihan
+# NIM  : 123140192 
+
 # Tugas Kesembilan — Integrasi AI API
 
 Project ini menambahkan fitur **AI Text Summarizer** pada aplikasi Kotlin Multiplatform.
@@ -27,7 +30,3 @@ Buka project di Android Studio lalu jalankan module `composeApp`.
 1. Tempel teks ke kotak input.
 2. Tekan tombol **Ringkas**.
 3. Tunggu hasil ringkasan dari Gemini.
-
-## Catatan
-- Jangan commit API key ke Git.
-- Fitur ini sudah memakai state loading dan error message agar sesuai dengan rubrik tugas.
