@@ -2,13 +2,14 @@ package com.example.tugaskesembilan.data.ai
 
 import com.example.tugaskesembilan.config.ApiConfig
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
+import io.ktor.client.statement.bodyAsText
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
-import io.ktor.http.content.TextContent
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
@@ -16,7 +17,6 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import io.ktor.client.request.*
 import java.io.IOException
 
 sealed class AIError(message: String) : Exception(message) {
@@ -35,40 +35,54 @@ class GeminiService(private val client: HttpClient) {
     private val model = "gemini-2.0-flash"
     private val json = Json { ignoreUnknownKeys = true }
 
-    suspend fun summarize(text: String): Result<String> = runCatching {
-        val cleanedText = text.trim()
-        if (cleanedText.isBlank()) throw AIError.InvalidPrompt()
+    suspend fun summarize(text: String): Result<String> {
+        return try {
+            val cleanedText = text.trim()
+            if (cleanedText.isBlank()) return Result.failure(AIError.InvalidPrompt())
 
-        val apiKey = ApiConfig.geminiApiKey
-        if (apiKey.isBlank()) throw AIError.MissingApiKey()
+            val apiKey = ApiConfig.geminiApiKey
+            if (apiKey.isBlank()) return Result.failure(AIError.MissingApiKey())
 
-        val prompt = buildSummaryPrompt(cleanedText)
-        val requestBody = buildGeminiRequest(prompt)
+            val prompt = buildSummaryPrompt(cleanedText)
+            val requestBody = buildGeminiRequest(prompt)
 
-        val responseText: String = client.post("$baseUrl/models/$model:generateContent") {
-            contentType(ContentType.Application.Json)
-            url {
-                parameters.append("key", apiKey)
-            }
-            setBody(TextContent(requestBody, ContentType.Application.Json))
-        }.body()
-
-        parseSummary(responseText)
-    }.recoverCatching { error ->
-        when (error) {
-            is ClientRequestException -> when (error.response.status.value) {
-                401 -> throw AIError.Unauthorized()
-                429 -> {
-                    val retryAfter = error.response.headers["Retry-After"]?.toIntOrNull() ?: 60
-                    throw AIError.RateLimited(retryAfter)
+            val response = client.post("$baseUrl/models/$model:generateContent") {
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("key", apiKey)
                 }
-                in 500..599 -> throw AIError.ServerError()
-                else -> throw error
+                setBody(requestBody)
             }
-            is ServerResponseException -> throw AIError.ServerError()
-            is IOException -> throw AIError.NetworkError()
-            is AIError -> throw error
-            else -> throw AIError.ParseError()
+
+            val responseText = response.bodyAsText()
+
+            if (!response.status.isSuccess()) {
+                return Result.failure(mapHttpStatus(response.status.value, response.headers["Retry-After"]))
+            }
+
+            Result.success(parseSummary(responseText))
+        } catch (e: Throwable) {
+            Result.failure(mapThrowable(e))
+        }
+    }
+
+    private fun mapHttpStatus(statusCode: Int, retryAfterHeader: String?): AIError {
+        return when (statusCode) {
+            401 -> AIError.Unauthorized()
+            429 -> AIError.RateLimited(retryAfterHeader?.toIntOrNull() ?: 60)
+            in 500..599 -> AIError.ServerError()
+            else -> AIError.ParseError()
+        }
+    }
+
+    private fun mapThrowable(error: Throwable): AIError {
+        return when (error) {
+            is AIError -> error
+            is ClientRequestException -> mapHttpStatus(error.response.status.value, error.response.headers["Retry-After"])
+            is ServerResponseException -> AIError.ServerError()
+            is IOException -> AIError.NetworkError()
+            is SecurityException -> AIError.NetworkError()
+            else -> AIError.ParseError()
         }
     }
 

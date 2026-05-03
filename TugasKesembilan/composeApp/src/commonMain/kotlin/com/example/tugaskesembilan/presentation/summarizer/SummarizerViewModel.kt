@@ -3,6 +3,7 @@ package com.example.tugaskesembilan.presentation.summarizer
 import androidx.lifecycle.ViewModel
 import com.example.tugaskesembilan.data.ai.AIRepository
 import com.example.tugaskesembilan.data.model.SummarizerUiState
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,7 +18,16 @@ class SummarizerViewModel(
     private val repository: AIRepository
 ) : ViewModel() {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        _uiState.update {
+            it.copy(
+                isLoading = false,
+                error = throwable.message ?: "Terjadi kesalahan saat memproses AI."
+            )
+        }
+    }
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default + exceptionHandler)
     private val _uiState = MutableStateFlow(SummarizerUiState())
     val uiState: StateFlow<SummarizerUiState> = _uiState.asStateFlow()
 
