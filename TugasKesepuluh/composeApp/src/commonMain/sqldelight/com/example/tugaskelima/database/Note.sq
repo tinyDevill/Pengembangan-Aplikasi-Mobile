@@ -1,0 +1,48 @@
+CREATE TABLE note_table (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  isFavorite INTEGER NOT NULL DEFAULT 0
+);
+
+-- Seed data untuk first launch
+INSERT INTO note_table (title, content, isFavorite) VALUES ('Belajar Compose', 'Multiplatform navigation sangat keren!', 0);
+INSERT INTO note_table (title, content, isFavorite) VALUES ('Tugas Kuliah', 'Deadline minggu ini', 1);
+INSERT INTO note_table (title, content, isFavorite) VALUES ('Meeting Proyek', 'Jam 14:00 dengan tim', 0);
+
+selectAll:
+SELECT *
+FROM note_table
+ORDER BY id DESC;
+
+searchNotes:
+SELECT *
+FROM note_table
+WHERE title LIKE '%' || :query || '%'
+   OR content LIKE '%' || :query || '%'
+ORDER BY id DESC;
+
+selectById:
+SELECT *
+FROM note_table
+WHERE id = ?;
+
+insertNote:
+INSERT INTO note_table(title, content, isFavorite)
+VALUES (?, ?, ?);
+
+updateNote:
+UPDATE note_table
+SET title = ?,
+    content = ?,
+    isFavorite = ?
+WHERE id = ?;
+
+deleteNote:
+DELETE FROM note_table
+WHERE id = ?;
+
+toggleFavorite:
+UPDATE note_table
+SET isFavorite = CASE WHEN isFavorite = 1 THEN 0 ELSE 1 END
+WHERE id = ?;
