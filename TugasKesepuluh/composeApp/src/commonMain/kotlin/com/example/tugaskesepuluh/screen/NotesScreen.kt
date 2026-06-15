@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.tugaskesepuluh.component.NoteItem
@@ -29,7 +30,11 @@ import com.example.tugaskesepuluh.component.NoteViewModel
 import com.example.tugaskesepuluh.component.NotesUiState
 
 @Composable
-fun NotesScreen(viewModel: NoteViewModel, onNoteClick: (Int) -> Unit) {
+fun NotesScreen(
+    viewModel: NoteViewModel,
+    onNoteClick: (Int) -> Unit,
+    showNetworkStatus: Boolean = true
+) {
     val searchQuery = viewModel.query.collectAsState().value
     val uiState = viewModel.uiState.collectAsState().value
 
@@ -39,12 +44,14 @@ fun NotesScreen(viewModel: NoteViewModel, onNoteClick: (Int) -> Unit) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        NetworkStatusIndicator()
+        if (showNetworkStatus) {
+            NetworkStatusIndicator()
+        }
 
         OutlinedTextField(
             value = searchQuery,
             onValueChange = viewModel::setSearchQuery,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag("notes_search_field"),
             singleLine = true,
             label = { Text("Search Notes") },
             leadingIcon = {
@@ -52,7 +59,10 @@ fun NotesScreen(viewModel: NoteViewModel, onNoteClick: (Int) -> Unit) {
             },
             trailingIcon = {
                 if (searchQuery.isNotBlank()) {
-                    IconButton(onClick = viewModel::clearSearch) {
+                    IconButton(
+                        onClick = viewModel::clearSearch,
+                        modifier = Modifier.testTag("notes_clear_search")
+                    ) {
                         Icon(Icons.Default.Clear, contentDescription = "Clear Search History")
                     }
                 }
@@ -62,7 +72,7 @@ fun NotesScreen(viewModel: NoteViewModel, onNoteClick: (Int) -> Unit) {
         when (uiState) {
             NotesUiState.Loading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().testTag("notes_loading"),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(36.dp))
@@ -71,7 +81,7 @@ fun NotesScreen(viewModel: NoteViewModel, onNoteClick: (Int) -> Unit) {
 
             is NotesUiState.Empty -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().testTag("notes_empty"),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -84,7 +94,7 @@ fun NotesScreen(viewModel: NoteViewModel, onNoteClick: (Int) -> Unit) {
 
             is NotesUiState.Content -> {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().testTag("notes_list"),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(uiState.notes, key = { it.id }) { note ->

@@ -16,13 +16,18 @@ import com.example.tugaskesepuluh.settings.createSettingsDataStore
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-val appModule: Module = module {
+val dataModule: Module = module {
     single<DatabaseDriverFactory> { provideDatabaseDriverFactory() }
     single<DataStore<Preferences>> { createSettingsDataStore() }
     single<NoteRepository> { SqlDelightNoteRepository(get<DatabaseDriverFactory>().createDriver()) }
     single<SettingsRepository> { DataStoreSettingsRepository(get()) }
     single { DeviceInfo() }
     single { NetworkMonitor() }
+}
+
+val viewModelModule: Module = module {
     factory { NoteViewModel(get(), get()) }
     factory { SettingsViewModel(get()) }
 }
+
+val appModules = listOf(dataModule, viewModelModule)

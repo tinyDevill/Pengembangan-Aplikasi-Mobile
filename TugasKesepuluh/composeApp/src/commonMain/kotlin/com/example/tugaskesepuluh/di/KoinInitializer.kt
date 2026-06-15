@@ -10,6 +10,6 @@ fun initKoin() {
     if (KoinBootState.started) return
     KoinBootState.started = true
     startKoin {
-        modules(appModule)
+        modules(appModules)
     }
 }

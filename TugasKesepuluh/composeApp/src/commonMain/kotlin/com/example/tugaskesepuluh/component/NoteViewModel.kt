@@ -4,6 +4,7 @@ import com.example.tugaskesepuluh.data.NoteRepository
 import com.example.tugaskesepuluh.settings.SettingsRepository
 import com.example.tugaskesepuluh.settings.SortOrder
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -20,9 +21,10 @@ import kotlinx.coroutines.launch
 
 class NoteViewModel(
     private val repository: NoteRepository,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val scope = CoroutineScope(SupervisorJob() + dispatcher)
     private val searchQuery = MutableStateFlow("")
     private val isLoading = MutableStateFlow(true)
 
